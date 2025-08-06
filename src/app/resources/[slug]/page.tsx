@@ -15,13 +15,14 @@ import {
 import Link from 'next/link';
 
 interface ResourcePageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: ResourcePageProps): Promise<Metadata> {
-  const resource = getResourceBySlug(params.slug);
+  const { slug } = await params;
+  const resource = getResourceBySlug(slug);
   
   if (!resource) {
     return {
@@ -63,8 +64,9 @@ export async function generateMetadata({ params }: ResourcePageProps): Promise<M
   };
 }
 
-export default function ResourcePage({ params }: ResourcePageProps) {
-  const resource = getResourceBySlug(params.slug);
+export default async function ResourcePage({ params }: ResourcePageProps) {
+  const { slug } = await params;
+  const resource = getResourceBySlug(slug);
 
   if (!resource) {
     notFound();

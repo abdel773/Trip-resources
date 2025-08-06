@@ -98,8 +98,4 @@ export default function HomePage() {
       </main>
     </div>
   );
-<<<<<<< HEAD
-} 
-=======
 }
->>>>>>> a5baca0e39c9157be23c2a7871646c8ada9d4518
