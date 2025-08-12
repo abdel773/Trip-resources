@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getAllResources } from '@/data/resources';
 import { Calendar, MapPin, Users, Star } from 'lucide-react';
+import Image from 'next/image';
 
 export default function HomePage() {
   const resources = getAllResources();
@@ -33,14 +34,15 @@ export default function HomePage() {
               className="group"
             >
               <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                {/* Image Placeholder */}
-                <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
-                  <div className="text-white text-center">
-                    <MapPin size={48} className="mx-auto mb-2" />
-                    <p className="text-sm font-medium">
-                      {resource.startCity} → {resource.arrivalCity}
-                    </p>
-                  </div>
+                {/* Image */}
+                <div className="h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+                  <Image
+                    src={resource.image}
+                    alt={resource.title}
+                    width={400}
+                    height={300}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
 
                 {/* Content */}

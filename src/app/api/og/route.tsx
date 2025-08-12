@@ -12,7 +12,19 @@ export async function GET(request: NextRequest) {
   const currency = searchParams.get('currency') || 'EUR';
   const startCity = searchParams.get('startCity') || '';
   const arrivalCity = searchParams.get('arrivalCity') || '';
+  const image = searchParams.get('image') || '';
 
+  // If we have an image, redirect to it for better social media previews
+  if (image) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        'Location': image,
+      },
+    });
+  }
+
+  // Fallback to generated image if no image provided
   return new ImageResponse(
     (
       <div

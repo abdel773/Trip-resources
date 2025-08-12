@@ -1,163 +1,219 @@
-# Trip Resources - Site de Partage de Ressources de Voyage
+# Trip Resources - Ressources de Voyage
 
-Un site web moderne pour lister des ressources de voyage et permettre aux visiteurs de partager facilement les liens sur les réseaux sociaux avec des aperçus riches.
+Une application Next.js moderne pour découvrir et partager des ressources de voyage avec un aperçu optimisé pour les réseaux sociaux.
 
 ## 🚀 Fonctionnalités
 
-- **Page d'accueil** : Liste toutes les ressources de voyage disponibles
-- **Pages de détail** : Affichage complet de chaque ressource avec toutes les informations
-- **Partage social** : Boutons de partage pour Twitter, Facebook, LinkedIn, WhatsApp
-- **Images Open Graph** : Génération automatique d'images 1200x630 pour les réseaux sociaux
-- **Métadonnées complètes** : Open Graph et Twitter Cards pour un partage optimal
-- **Design responsive** : Interface moderne et adaptative
+- **6 ressources de voyage** avec des **images réelles de haute qualité**
+- **Aperçu optimisé** pour WhatsApp, Facebook, Twitter et autres réseaux sociaux
+- **Images professionnelles** depuis Unsplash pour chaque destination
+- **Métadonnées complètes** pour le SEO et le partage social
+- **Interface responsive** et moderne
+- **Système de partage** intégré
 
-## 🛠️ Technologies
+## 🌍 Destinations disponibles
 
-- **Next.js 15.1.0** avec App Router
-- **TypeScript** pour la sécurité des types
-- **Tailwind CSS** pour le styling
-- **@vercel/og** pour la génération d'images Open Graph
-- **Lucide React** pour les icônes
+1. **Paris Romantique** - Weekend romantique avec croisière sur la Seine
+2. **Japon - Cerisiers** - Tour des cerisiers en fleurs
+3. **Islande - Aurores** - Chasse aux aurores boréales
+4. **Îles Grecques** - Santorin, Mykonos et Crète
+5. **Pérou - Machu Picchu** - Découverte de la culture inca
+6. **Nouvelle-Zélande** - Aventure et nature
 
-## 📁 Structure du Projet
+## 🖼️ Images de haute qualité
 
+Toutes les images sont des **photos réelles professionnelles** provenant d'Unsplash :
+
+- **Paris** : Tour Eiffel au coucher de soleil
+- **Japon** : Cerisiers en fleurs avec Mont Fuji
+- **Islande** : Aurores boréales sur des glaciers
+- **Grèce** : Santorin avec ses toits blancs
+- **Pérou** : Machu Picchu dans les montagnes
+- **Nouvelle-Zélande** : Fjords et paysages naturels
+
+### Avantages des vraies images :
+- ✅ **Qualité professionnelle** - Photos de haute résolution
+- ✅ **Authenticité** - Vraies destinations, pas de dessins
+- ✅ **Impact visuel** - Attire l'attention des utilisateurs
+- ✅ **SEO optimisé** - Meilleur référencement
+- ✅ **Partage social** - Aperçus riches sur WhatsApp, Facebook, etc.
+
+## 🛠️ Installation
+
+```bash
+# Cloner le projet
+git clone <repository-url>
+cd trip-resources
+
+# Installer les dépendances
+npm install
+
+# Lancer en mode développement
+npm run dev
 ```
-src/
-├── app/
-│   ├── api/og/route.tsx          # API pour générer les images OG
-│   ├── resources/[slug]/page.tsx  # Page de détail d'une ressource
-│   ├── layout.tsx                 # Layout principal avec métadonnées
-│   └── page.tsx                   # Page d'accueil
-├── components/
-│   └── ShareBar.tsx              # Composant de partage social
-├── data/
-│   └── resources.ts              # Données des ressources
-└── types/
-    └── resource.ts               # Types TypeScript
-```
 
-## 🚀 Installation et Démarrage
+## ⚙️ Configuration
 
-1. **Cloner le projet**
-   ```bash
-   git clone <repository-url>
-   cd trip-resources
-   ```
+### Variables d'environnement
 
-2. **Installer les dépendances**
-   ```bash
-   npm install
-   ```
-
-3. **Lancer le serveur de développement**
-   ```bash
-   npm run dev
-   ```
-
-4. **Ouvrir dans le navigateur**
-   ```
-   http://localhost:3000
-   ```
-
-## 📱 Fonctionnalités de Partage
-
-### Réseaux Sociaux Supportés
-- **Twitter (X)** : Partage avec texte et URL
-- **Facebook** : Partage avec aperçu riche
-- **LinkedIn** : Partage professionnel
-- **WhatsApp** : Partage direct avec texte
-
-### Images Open Graph
-- **Taille** : 1200x630 pixels
-- **Format** : PNG généré dynamiquement
-- **Contenu** : Titre, description, prix, villes de départ/arrivée
-- **Design** : Gradient moderne avec éléments visuels
-
-## 🔧 Configuration
-
-### Variables d'Environnement
-
-Créez un fichier `.env.local` :
+Créez un fichier `.env.local` à la racine du projet :
 
 ```env
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
-### Déploiement
+Pour la production, remplacez par votre URL de domaine.
 
-Le projet est optimisé pour le déploiement sur Vercel :
+### Configuration des images
 
-1. Connectez votre repository GitHub à Vercel
-2. Configurez la variable d'environnement `NEXT_PUBLIC_BASE_URL`
-3. Déployez automatiquement
+Le projet est configuré pour utiliser des images externes depuis Unsplash. La configuration se trouve dans `next.config.ts` :
+
+```typescript
+images: {
+  remotePatterns: [
+    {
+      protocol: 'https',
+      hostname: 'images.unsplash.com',
+      port: '',
+      pathname: '/**',
+    },
+  ],
+},
+```
+
+### Configuration de l'aperçu sur WhatsApp
+
+L'application est configurée pour afficher un aperçu optimal sur WhatsApp et autres réseaux sociaux grâce à :
+
+- **Métadonnées Open Graph** complètes
+- **Images réelles** de haute qualité
+- **Métadonnées Twitter Card** configurées
+- **Favicons** et icônes Apple Touch
+
+## 📱 Aperçu sur les réseaux sociaux
+
+### WhatsApp
+- Titre de la ressource
+- Description courte
+- **Image réelle de la destination**
+- Prix et informations clés
+
+### Facebook/Twitter
+- Aperçu riche avec **vraie photo**
+- Métadonnées complètes
+- URL canonique
+
+### LinkedIn
+- Métadonnées professionnelles
+- **Images optimisées et authentiques**
+
+## 🎨 Personnalisation des images
+
+Les images sont hébergées sur Unsplash et peuvent être facilement modifiées :
+
+1. **Trouvez une nouvelle image** sur [Unsplash](https://unsplash.com)
+2. **Copiez l'URL** de l'image
+3. **Ajoutez les paramètres** de redimensionnement : `?w=1200&h=800&fit=crop&crop=center`
+4. **Mettez à jour** le fichier `src/data/resources.ts`
+
+### Exemple de modification :
+```typescript
+// Avant
+image: 'https://images.unsplash.com/photo-1502602898534-37dd6c393c4d?w=1200&h=800&fit=crop&crop=center'
+
+// Après (nouvelle image)
+image: 'https://images.unsplash.com/photo-NOUVELLE_ID?w=1200&h=800&fit=crop&crop=center'
+```
+
+## 🔧 Structure du projet
+
+```
+trip-resources/
+├── src/
+│   ├── app/
+│   │   ├── api/og/          # API pour les images OG
+│   │   ├── resources/[slug]/ # Pages des ressources
+│   │   ├── layout.tsx       # Layout principal
+│   │   └── page.tsx         # Page d'accueil
+│   ├── components/           # Composants réutilisables
+│   ├── data/                # Données des ressources
+│   └── types/               # Types TypeScript
+├── public/
+│   └── images/              # Images et assets
+├── next.config.ts           # Configuration Next.js
+└── package.json
+```
 
 ## 📊 Métadonnées et SEO
 
-### Open Graph
-- `og:title` : Titre de la ressource
-- `og:description` : Description courte
-- `og:url` : URL canonique
-- `og:image` : Image générée dynamiquement
-- `og:type` : website
-- `og:locale` : fr_FR
+### Métadonnées globales
+- Titre et description optimisés
+- Mots-clés ciblés
+- Auteur et créateur
+- Robots et indexation
 
-### Twitter Cards
-- `twitter:card` : summary_large_image
-- `twitter:title` : Titre de la ressource
-- `twitter:description` : Description courte
-- `twitter:image` : Image générée dynamiquement
+### Métadonnées par ressource
+- Titre et description spécifiques
+- **Images Open Graph réelles**
+- Mots-clés localisés
+- URL canonique
 
-## 🎨 Design
+## 🚀 Déploiement
 
-- **Interface moderne** avec Tailwind CSS
-- **Responsive design** pour tous les appareils
-- **Animations fluides** et transitions
-- **Couleurs cohérentes** et typographie lisible
-- **Composants réutilisables** et modulaires
+### Vercel (Recommandé)
+```bash
+npm run build
+vercel --prod
+```
 
-## 📝 Ajout de Nouvelles Ressources
-
-Pour ajouter une nouvelle ressource, modifiez le fichier `src/data/resources.ts` :
-
-```typescript
-{
-  id: 'unique-id',
-  slug: 'url-friendly-slug',
-  title: 'Titre de la ressource',
-  description: 'Description complète...',
-  shortDescription: 'Description courte pour les aperçus',
-  price: 999,
-  currency: 'EUR',
-  startDate: '2024-06-15',
-  endDate: '2024-06-17',
-  startCity: 'Paris',
-  arrivalCity: 'Lyon',
-  // ... autres champs
-}
+### Autres plateformes
+```bash
+npm run build
+npm start
 ```
 
 ## 🧪 Tests
 
-Pour tester les images Open Graph :
+```bash
+# Tests unitaires
+npm run test
 
-1. **Twitter Card Validator** : https://cards-dev.twitter.com/validator
-2. **Facebook Sharing Debugger** : https://developers.facebook.com/tools/debug/
-3. **LinkedIn Post Inspector** : https://www.linkedin.com/post-inspector/
+# Tests E2E
+npm run test:e2e
 
-## 📄 Licence
+# Vérification des types
+npm run type-check
+```
 
-Ce projet est sous licence MIT.
+## 📈 Améliorations futures
+
+- [ ] Système de réservation
+- [ ] Filtres et recherche
+- [ ] Système d'avis
+- [ ] Intégration de cartes
+- [ ] Mode sombre
+- [ ] PWA complète
+- [ ] **Galerie d'images multiples** par destination
+- [ ] **Vidéos 360°** des destinations
 
 ## 🤝 Contribution
 
-Les contributions sont les bienvenues ! N'hésitez pas à :
-
 1. Fork le projet
-2. Créer une branche feature
-3. Commiter vos changements
-4. Pousser vers la branche
-5. Ouvrir une Pull Request
+2. Créez une branche feature (`git checkout -b feature/AmazingFeature`)
+3. Committez vos changements (`git commit -m 'Add some AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrez une Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 ## 📞 Support
 
-Pour toute question ou problème, ouvrez une issue sur GitHub.
+Pour toute question ou problème :
+- Ouvrez une issue sur GitHub
+- Contactez l'équipe de développement
+
+---
+
+**Trip Resources** - Découvrez le monde avec nous ! 🌍✈️📸

@@ -1,189 +1,199 @@
-# 🧪 Guide de Test - Trip Resources
+# Guide de Test - Aperçu sur les Réseaux Sociaux
 
-Ce guide vous aide à tester toutes les fonctionnalités du projet Trip Resources.
+Ce guide vous aide à tester l'aperçu de vos ressources de voyage sur WhatsApp et autres réseaux sociaux.
 
-## 🚀 Démarrage Rapide
+## 🧪 Tests Locaux
 
-1. **Installer les dépendances**
-   ```bash
-   npm install
-   ```
-
-2. **Démarrer le serveur de développement**
+### 1. Démarrer l'application
    ```bash
    npm run dev
    ```
 
-3. **Ouvrir le navigateur**
-   ```
-   http://localhost:3000
-   ```
+### 2. Tester les pages
+- **Page d'accueil** : http://localhost:3000
+- **Ressource Paris** : http://localhost:3000/resources/paris-romantic-weekend
+- **Ressource Japon** : http://localhost:3000/resources/japan-cherry-blossom-tour
+- **Ressource Islande** : http://localhost:3000/resources/iceland-northern-lights
+- **Ressource Grèce** : http://localhost:3000/resources/santorini-greek-islands
+- **Ressource Pérou** : http://localhost:3000/resources/peru-machu-picchu
+- **Ressource NZ** : http://localhost:3000/resources/new-zealand-adventure
 
-## 📋 Checklist de Test
+## 📱 Test WhatsApp
 
-### ✅ Page d'Accueil
-- [ ] La page se charge correctement
-- [ ] Toutes les ressources sont affichées
-- [ ] Les cartes sont cliquables
-- [ ] Le design est responsive
-- [ ] Les prix sont formatés correctement
+### Méthode 1 : Partage direct
+1. Ouvrez WhatsApp sur votre téléphone
+2. Partagez le lien d'une ressource avec vous-même ou un contact
+3. Vérifiez que l'aperçu affiche :
+   - ✅ Titre de la ressource
+   - ✅ Description courte
+   - ✅ Image de la destination
+   - ✅ URL du site
 
-### ✅ Pages de Détail des Ressources
-- [ ] Navigation vers `/resources/[slug]` fonctionne
-- [ ] Toutes les informations de la ressource sont affichées
-- [ ] Les dates sont formatées en français
-- [ ] Les sections "Inclus" et "Non inclus" sont présentes
-- [ ] Le bouton "Réserver maintenant" est visible
+### Méthode 2 : Test avec WhatsApp Web
+1. Ouvrez WhatsApp Web
+2. Partagez un lien dans une conversation
+3. Vérifiez l'aperçu
 
-### ✅ Barre de Partage
-- [ ] Les boutons de partage sont présents
-- [ ] Twitter/X fonctionne
-- [ ] Facebook fonctionne
-- [ ] LinkedIn fonctionne
-- [ ] WhatsApp fonctionne
-- [ ] Le bouton "Copier le lien" fonctionne
-- [ ] La notification "Lien copié" s'affiche
-
-### ✅ Images Open Graph
-- [ ] L'API `/api/og` répond
-- [ ] Les images sont générées avec les bons paramètres
-- [ ] Les images font 1200x630 pixels
-- [ ] Le design est cohérent
-- [ ] Les textes sont lisibles
-
-### ✅ Métadonnées
-- [ ] Les balises Open Graph sont présentes
-- [ ] Les Twitter Cards sont configurées
-- [ ] Les URLs canoniques sont correctes
-- [ ] Les descriptions sont appropriées
-
-## 🛠️ Outils de Test
-
-### Test des Images Open Graph
-
-1. **Test Direct**
-   ```
-   http://localhost:3000/api/og?title=Test&description=Description&price=999&currency=EUR&startCity=Paris&arrivalCity=Lyon
-   ```
-
-2. **Page de Test**
-   ```
-   http://localhost:3000/test-og.html
-   ```
-
-### Validation sur les Réseaux Sociaux
-
-1. **Twitter Card Validator**
-   - URL : https://cards-dev.twitter.com/validator
-   - Collez l'URL d'une ressource
-   - Vérifiez l'aperçu
-
-2. **Facebook Sharing Debugger**
-   - URL : https://developers.facebook.com/tools/debug/
-   - Collez l'URL d'une ressource
-   - Vérifiez l'aperçu
-
-3. **LinkedIn Post Inspector**
-   - URL : https://www.linkedin.com/post-inspector/
-   - Collez l'URL d'une ressource
-   - Vérifiez l'aperçu
-
-## 🔗 URLs de Test
-
-### Ressources Disponibles
-- **Paris Romantique** : `http://localhost:3000/resources/paris-romantic-weekend`
-- **Japon Cerisiers** : `http://localhost:3000/resources/japan-cherry-blossom-tour`
-- **Islande Aurores** : `http://localhost:3000/resources/iceland-northern-lights`
-
-### Images Open Graph
-- **Test Simple** : `http://localhost:3000/api/og?title=Test&description=Description`
-- **Avec Prix** : `http://localhost:3000/api/og?title=Test&description=Description&price=1500&currency=EUR`
-- **Avec Villes** : `http://localhost:3000/api/og?title=Test&description=Description&startCity=Paris&arrivalCity=Lyon`
-
-## 🐛 Dépannage
-
-### Problèmes Courants
-
-1. **Images Open Graph ne se chargent pas**
-   - Vérifiez que le serveur fonctionne
-   - Vérifiez les paramètres de l'URL
-   - Consultez les logs du serveur
-
-2. **Partage social ne fonctionne pas**
-   - Vérifiez que les URLs sont correctes
-   - Testez avec des URLs publiques
-   - Vérifiez les paramètres de partage
-
-3. **Design responsive**
-   - Testez sur différentes tailles d'écran
-   - Vérifiez les breakpoints Tailwind
-   - Testez sur mobile
-
-### Logs de Développement
-
-Pour voir les logs détaillés :
+### Méthode 3 : Test avec l'API WhatsApp
 ```bash
-npm run dev
+# Utilisez l'API WhatsApp Business pour tester
+curl -X POST "https://graph.facebook.com/v17.0/YOUR_PHONE_NUMBER_ID/messages" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messaging_product": "whatsapp",
+    "to": "YOUR_PHONE_NUMBER",
+    "type": "text",
+    "text": {
+      "body": "http://localhost:3000/resources/paris-romantic-weekend"
+    }
+  }'
 ```
 
-Puis ouvrez les outils de développement du navigateur (F12) pour voir les erreurs console.
+## 🌐 Test Facebook
+
+### Facebook Sharing Debugger
+1. Allez sur : https://developers.facebook.com/tools/debug/
+2. Entrez l'URL de votre ressource
+3. Cliquez sur "Debug"
+4. Vérifiez les métadonnées Open Graph
+
+### Test sur Facebook
+1. Créez un post sur Facebook
+2. Collez l'URL de la ressource
+3. Attendez que l'aperçu se charge
+4. Vérifiez l'affichage
+
+## 🐦 Test Twitter
+
+### Twitter Card Validator
+1. Allez sur : https://cards-dev.twitter.com/validator
+2. Entrez l'URL de votre ressource
+3. Cliquez sur "Preview card"
+4. Vérifiez l'aperçu de la carte
+
+### Test sur Twitter
+1. Créez un tweet
+2. Collez l'URL de la ressource
+3. Vérifiez l'aperçu de la carte
+
+## 💼 Test LinkedIn
+
+### LinkedIn Post Inspector
+1. Allez sur : https://www.linkedin.com/post-inspector/
+2. Entrez l'URL de votre ressource
+3. Vérifiez l'aperçu
+
+### Test sur LinkedIn
+1. Créez un post LinkedIn
+2. Collez l'URL de la ressource
+3. Vérifiez l'aperçu
+
+## 🔍 Test des Métadonnées
+
+### Vérification des balises Open Graph
+```html
+<!-- Vérifiez que ces balises sont présentes dans le HTML -->
+<meta property="og:title" content="Titre de la ressource" />
+<meta property="og:description" content="Description de la ressource" />
+<meta property="og:image" content="URL de l'image" />
+<meta property="og:url" content="URL de la page" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="fr_FR" />
+```
+
+### Vérification des Twitter Cards
+```html
+<!-- Vérifiez que ces balises sont présentes -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Titre de la ressource" />
+<meta name="twitter:description" content="Description de la ressource" />
+<meta name="twitter:image" content="URL de l'image" />
+```
+
+## 🖼️ Test des Images
+
+### Vérification des images SVG
+1. Ouvrez les images dans le navigateur
+2. Vérifiez qu'elles s'affichent correctement
+3. Testez différentes tailles d'écran
+
+### Test de l'API OG
+```bash
+# Test de l'API de génération d'images
+curl "http://localhost:3000/api/og?title=Test&description=Description&price=999&currency=EUR&startCity=Paris&arrivalCity=Lyon"
+```
 
 ## 📱 Test Mobile
 
-1. **Ouvrez les outils de développement**
-2. **Activez le mode responsive**
-3. **Testez différentes tailles d'écran**
-4. **Vérifiez la navigation tactile**
+### Test sur différents appareils
+- **iPhone** : Safari, Chrome
+- **Android** : Chrome, Samsung Internet
+- **Tablette** : iPad, Android tablet
 
-## 🌐 Test de Performance
+### Test de la responsivité
+1. Redimensionnez la fenêtre du navigateur
+2. Utilisez les outils de développement
+3. Testez en mode portrait et paysage
 
-1. **Lighthouse Audit**
-   - Ouvrez Chrome DevTools
-   - Allez dans l'onglet "Lighthouse"
-   - Lancez un audit complet
+## 🚨 Problèmes Courants
 
-2. **Vérifiez les métriques**
-   - First Contentful Paint
-   - Largest Contentful Paint
-   - Cumulative Layout Shift
+### Aperçu ne s'affiche pas
+- Vérifiez que l'URL est accessible publiquement
+- Vérifiez les métadonnées dans le code source
+- Utilisez les outils de debug des réseaux sociaux
 
-## ✅ Critères de Validation
+### Image ne s'affiche pas
+- Vérifiez que l'URL de l'image est correcte
+- Vérifiez que l'image est accessible
+- Testez avec une image JPG/PNG si SVG pose problème
 
-### Fonctionnalités Obligatoires
-- [ ] Next.js 15.1.0 avec TypeScript
-- [ ] App Router configuré
-- [ ] Pages de ressources fonctionnelles
-- [ ] Barre de partage complète
-- [ ] Images Open Graph 1200x630
-- [ ] Métadonnées Open Graph et Twitter
-- [ ] Design responsive
+### Métadonnées incorrectes
+- Vérifiez le fichier `[slug]/page.tsx`
+- Vérifiez la fonction `generateMetadata`
+- Vérifiez les variables d'environnement
 
-### Fonctionnalités Bonus
-- [ ] Interface moderne et attrayante
-- [ ] Animations fluides
-- [ ] Code bien structuré
-- [ ] Documentation complète
-- [ ] Prêt pour le déploiement
+## ✅ Checklist de Test
 
-## 🚀 Déploiement
+### Fonctionnalités de base
+- [ ] Application se lance sans erreur
+- [ ] Page d'accueil affiche 6 ressources
+- [ ] Images SVG s'affichent correctement
+- [ ] Navigation entre les pages fonctionne
 
-Une fois tous les tests validés :
+### Métadonnées
+- [ ] Balises Open Graph présentes
+- [ ] Twitter Cards configurées
+- [ ] Images OG correctement référencées
+- [ ] URLs canoniques correctes
 
-1. **Préparez pour Vercel**
-   ```bash
-   npm run build
-   ```
+### Aperçu social
+- [ ] WhatsApp affiche l'aperçu
+- [ ] Facebook affiche l'aperçu
+- [ ] Twitter affiche la carte
+- [ ] LinkedIn affiche l'aperçu
 
-2. **Déployez**
-   - Connectez votre repo à Vercel
-   - Configurez les variables d'environnement
-   - Déployez automatiquement
+### Responsivité
+- [ ] Interface s'adapte au mobile
+- [ ] Images se redimensionnent
+- [ ] Navigation mobile fonctionne
 
-3. **Testez en production**
-   - Validez les images Open Graph
-   - Testez le partage social
-   - Vérifiez les performances
+## 🎯 Outils de Test Recommandés
+
+- **WhatsApp** : Application mobile ou WhatsApp Web
+- **Facebook** : Facebook Sharing Debugger
+- **Twitter** : Twitter Card Validator
+- **LinkedIn** : LinkedIn Post Inspector
+- **Général** : Open Graph Debugger, Meta Tags Checker
+
+## 📞 Support
+
+Si vous rencontrez des problèmes :
+1. Vérifiez les logs de la console
+2. Utilisez les outils de debug des réseaux sociaux
+3. Vérifiez la configuration des métadonnées
+4. Testez avec une URL publique
 
 ---
 
-**Note** : Ce guide doit être suivi pour s'assurer que toutes les spécifications du projet sont respectées. 
+**Note** : Pour un test complet, déployez l'application sur un serveur public, car certains réseaux sociaux ne peuvent pas accéder aux localhost. 
