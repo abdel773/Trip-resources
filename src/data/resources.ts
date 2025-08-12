@@ -134,7 +134,7 @@ export const resources: Resource[] = [
     currency: 'EUR',
     startDate: '2024-07-20',
     endDate: '2024-07-30',
-    startCity: 'Athènes',
+    startCity: 'Athènes', 
     arrivalCity: 'Athènes',
     image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&h=600&fit=crop',
     category: 'Plage',
