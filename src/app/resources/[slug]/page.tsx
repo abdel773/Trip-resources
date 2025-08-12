@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: ResourcePageProps): Promise<M
           width: 400,
           height: 300,
           alt: resource.title,
-        },
+        }, 
       ],
       locale: 'fr_FR',
       type: 'website',
