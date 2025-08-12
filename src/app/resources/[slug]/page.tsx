@@ -87,7 +87,7 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
             Ressource non trouvée 
           </h1>
           <p className="text-gray-600"> 
-            Aucune ressource trouvée.
+            Aucune ressource trouvée. 
           </p>
         </div>
       </div>
