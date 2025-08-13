@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Twitter, 
   Facebook, 
   Linkedin, 
   MessageCircle, 
   Copy,
-  Check
+  Check,
+  Smartphone,
+  Monitor
 } from 'lucide-react';
 
 interface ShareBarProps {
@@ -34,6 +36,19 @@ export default function ShareBar({
   currency 
 }: ShareBarProps) {
   const [copied, setCopied] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Détection mobile/desktop
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Formatage des dates pour l'affichage
   const formatDate = (dateString: string) => {
@@ -75,9 +90,12 @@ export default function ShareBar({
       color: 'hover:bg-blue-700'
     },
     whatsapp: {
-      url: `https://wa.me/?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
+      // URL différente selon mobile/desktop
+      url: isMobile 
+        ? `whatsapp://send?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`
+        : `https://wa.me/?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
       icon: MessageCircle,
-      label: 'Partager sur WhatsApp',
+      label: isMobile ? 'Partager sur WhatsApp' : 'Partager sur WhatsApp Web',
       color: 'hover:bg-green-500'
     }
   };
@@ -94,7 +112,14 @@ export default function ShareBar({
 
   const handleShare = (platform: keyof typeof shareData) => {
     const data = shareData[platform];
-    window.open(data.url, '_blank', 'width=600,height=400');
+    
+    if (platform === 'whatsapp' && isMobile) {
+      // Sur mobile, essayer d'ouvrir l'app WhatsApp
+      window.location.href = data.url;
+    } else {
+      // Sur desktop, ouvrir dans une popup
+      window.open(data.url, '_blank', 'width=600,height=400');
+    }
   };
 
   return (
@@ -102,6 +127,21 @@ export default function ShareBar({
       <h3 className="text-lg font-semibold text-gray-800 mb-4">
         Partager cette ressource
       </h3>
+      
+      {/* Indicateur mobile/desktop */}
+      <div className="mb-4 p-2 bg-gray-50 rounded-lg text-sm text-gray-600 flex items-center gap-2">
+        {isMobile ? (
+          <>
+            <Smartphone size={16} />
+            <span>Mode mobile - L'application WhatsApp s'ouvrira directement</span>
+          </>
+        ) : (
+          <>
+            <Monitor size={16} />
+            <span>Mode desktop - WhatsApp Web s'ouvrira</span>
+          </>
+        )}
+      </div>
       
       <div className="flex flex-wrap gap-3">
         {Object.entries(shareData).map(([platform, data]) => {
@@ -135,6 +175,19 @@ export default function ShareBar({
         <div className="mt-3 text-sm text-green-600 flex items-center gap-2">
           <Check size={16} />
           Lien copié dans le presse-papiers !
+        </div>
+      )}
+      
+      {/* Instructions pour le partage mobile */}
+      {!isMobile && (
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+          <p className="font-medium mb-1">💡 Pour partager sur votre téléphone :</p>
+          <ol className="list-decimal list-inside space-y-1 text-xs">
+            <li>Copiez le lien avec le bouton "Copier le lien"</li>
+            <li>Ouvrez WhatsApp sur votre téléphone</li>
+            <li>Collez le lien dans une conversation</li>
+            <li>WhatsApp affichera automatiquement l'aperçu avec toutes les informations</li>
+          </ol>
         </div>
       )}
     </div>
