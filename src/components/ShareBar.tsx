@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
   Twitter, 
   Facebook, 
@@ -8,8 +8,7 @@ import {
   MessageCircle, 
   Copy,
   Check,
-  Smartphone,
-  Monitor
+  Share2
 } from 'lucide-react';
 
 interface ShareBarProps {
@@ -36,19 +35,6 @@ export default function ShareBar({
   currency 
 }: ShareBarProps) {
   const [copied, setCopied] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Détection mobile/desktop
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // Formatage des dates pour l'affichage
   const formatDate = (dateString: string) => {
@@ -90,12 +76,9 @@ export default function ShareBar({
       color: 'hover:bg-blue-700'
     },
     whatsapp: {
-      // URL différente selon mobile/desktop
-      url: isMobile 
-        ? `whatsapp://send?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`
-        : `https://wa.me/?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
+      url: `https://wa.me/?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
       icon: MessageCircle,
-      label: isMobile ? 'Partager sur WhatsApp' : 'Partager sur WhatsApp Web',
+      label: 'Partager sur WhatsApp',
       color: 'hover:bg-green-500'
     }
   };
@@ -110,16 +93,29 @@ export default function ShareBar({
     }
   };
 
+  // Utilisation de l'API Web Share native (plus moderne et efficace)
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: title,
+          text: enrichedDescription,
+          url: url,
+        });
+      } catch (err) {
+        console.log('Erreur lors du partage natif:', err);
+        // Fallback vers la méthode classique
+        handleShare('whatsapp');
+      }
+    } else {
+      // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
+      handleShare('whatsapp');
+    }
+  };
+
   const handleShare = (platform: keyof typeof shareData) => {
     const data = shareData[platform];
-    
-    if (platform === 'whatsapp' && isMobile) {
-      // Sur mobile, essayer d'ouvrir l'app WhatsApp
-      window.location.href = data.url;
-    } else {
-      // Sur desktop, ouvrir dans une popup
-      window.open(data.url, '_blank', 'width=600,height=400');
-    }
+    window.open(data.url, '_blank', 'width=600,height=400');
   };
 
   return (
@@ -128,19 +124,18 @@ export default function ShareBar({
         Partager cette ressource
       </h3>
       
-      {/* Indicateur mobile/desktop */}
-      <div className="mb-4 p-2 bg-gray-50 rounded-lg text-sm text-gray-600 flex items-center gap-2">
-        {isMobile ? (
-          <>
-            <Smartphone size={16} />
-            <span>Mode mobile - L'application WhatsApp s'ouvrira directement</span>
-          </>
-        ) : (
-          <>
-            <Monitor size={16} />
-            <span>Mode desktop - WhatsApp Web s'ouvrira</span>
-          </>
-        )}
+      {/* Bouton de partage natif (prioritaire) */}
+      <div className="mb-4">
+        <button
+          onClick={handleNativeShare}
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors duration-200 font-medium"
+        >
+          <Share2 size={20} />
+          <span>Partager</span>
+        </button>
+        <p className="text-xs text-gray-500 mt-2 text-center">
+          Utilise le menu de partage de votre système (WhatsApp, Messages, Email, etc.)
+        </p>
       </div>
       
       <div className="flex flex-wrap gap-3">
@@ -178,18 +173,13 @@ export default function ShareBar({
         </div>
       )}
       
-      {/* Instructions pour le partage mobile */}
-      {!isMobile && (
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
-          <p className="font-medium mb-1">💡 Pour partager sur votre téléphone :</p>
-          <ol className="list-decimal list-inside space-y-1 text-xs">
-            <li>Copiez le lien avec le bouton "Copier le lien"</li>
-            <li>Ouvrez WhatsApp sur votre téléphone</li>
-            <li>Collez le lien dans une conversation</li>
-            <li>WhatsApp affichera automatiquement l'aperçu avec toutes les informations</li>
-          </ol>
-        </div>
-      )}
+      {/* Instructions pour le partage optimal */}
+      <div className="mt-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+        <p className="font-medium mb-2">- Conseils de partage :</p>
+        <ul className="list-disc list-inside space-y-1 text-xs">
+          <li><strong>Copier le lien</strong> : Pour partager manuellement ou par message</li>
+        </ul>
+      </div>
     </div>
   );
 } 
