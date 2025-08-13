@@ -22,9 +22,22 @@ export async function generateMetadata({ params }: ResourcePageProps): Promise<M
   const url = `${baseUrl}/resources/${resource.slug}`;
   const imageUrl = resource.image; // URL directe de l'image
 
+  // Formatage des dates pour l'affichage
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    });
+  };
+
+  // Création d'une description enrichie avec les informations de voyage
+  const enrichedDescription = `${resource.shortDescription} | Départ: ${resource.startCity} → Arrivée: ${resource.arrivalCity} | ${formatDate(resource.startDate)} - ${formatDate(resource.endDate)} | ${resource.price.toLocaleString()} ${resource.currency}`;
+
   return {
     title: resource.title,
-    description: resource.shortDescription,
+    description: enrichedDescription,
     keywords: [
       'voyage',
       'tourisme',
@@ -37,7 +50,7 @@ export async function generateMetadata({ params }: ResourcePageProps): Promise<M
     authors: [{ name: 'Trip Resources' }],
     openGraph: {
       title: resource.title,
-      description: resource.shortDescription,
+      description: enrichedDescription,
       url: url,
       siteName: 'Trip Resources',
       images: [
@@ -54,7 +67,7 @@ export async function generateMetadata({ params }: ResourcePageProps): Promise<M
     twitter: {
       card: 'summary_large_image',
       title: resource.title,
-      description: resource.shortDescription,
+      description: enrichedDescription,
       images: [imageUrl],
       creator: '@tripresources',
     },
@@ -261,6 +274,12 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
               title={resource.title}
               description={resource.shortDescription}
               url={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/resources/${resource.slug}`}
+              startCity={resource.startCity}
+              arrivalCity={resource.arrivalCity}
+              startDate={resource.startDate}
+              endDate={resource.endDate}
+              price={resource.price}
+              currency={resource.currency}
             />
           </div>
         </div>

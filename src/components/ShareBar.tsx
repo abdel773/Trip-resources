@@ -14,14 +14,50 @@ interface ShareBarProps {
   url: string;
   title: string;
   description: string;
+  startCity?: string;
+  arrivalCity?: string;
+  startDate?: string;
+  endDate?: string;
+  price?: number;
+  currency?: string;
 }
 
-export default function ShareBar({ url, title, description }: ShareBarProps) {
+export default function ShareBar({ 
+  url, 
+  title, 
+  description, 
+  startCity, 
+  arrivalCity, 
+  startDate, 
+  endDate, 
+  price, 
+  currency 
+}: ShareBarProps) {
   const [copied, setCopied] = useState(false);
+
+  // Formatage des dates pour l'affichage
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('fr-FR', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
+  // Création d'une description enrichie pour le partage
+  const enrichedDescription = startCity && arrivalCity && startDate && endDate && price && currency
+    ? `${title} | Départ: ${startCity} → Arrivée: ${arrivalCity} | ${formatDate(startDate)} - ${formatDate(endDate)} | ${price.toLocaleString()} ${currency}`
+    : description;
 
   const shareData = {
     twitter: {
-      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
+      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(enrichedDescription)}&url=${encodeURIComponent(url)}`,
       icon: Twitter,
       label: 'Partager sur Twitter',
       color: 'hover:bg-blue-500'
@@ -39,7 +75,7 @@ export default function ShareBar({ url, title, description }: ShareBarProps) {
       color: 'hover:bg-blue-700'
     },
     whatsapp: {
-      url: `https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`,
+      url: `https://wa.me/?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
       icon: MessageCircle,
       label: 'Partager sur WhatsApp',
       color: 'hover:bg-green-500'

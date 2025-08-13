@@ -12,6 +12,8 @@ export async function GET(request: NextRequest) {
   const currency = searchParams.get('currency') || 'EUR';
   const startCity = searchParams.get('startCity') || '';
   const arrivalCity = searchParams.get('arrivalCity') || '';
+  const startDate = searchParams.get('startDate') || '';
+  const endDate = searchParams.get('endDate') || '';
   const image = searchParams.get('image') || '';
 
   // If we have an image, redirect to it for better social media previews
@@ -23,6 +25,21 @@ export async function GET(request: NextRequest) {
       },
     });
   }
+
+  // Formatage des dates pour l'affichage
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('fr-FR', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      });
+    } catch {
+      return dateString;
+    }
+  };
 
   // Fallback to generated image if no image provided
   return new ImageResponse(
@@ -135,29 +152,45 @@ export async function GET(request: NextRequest) {
             {description}
           </p>
 
-          {/* Route Info */}
+          {/* Route Info - Enhanced with dates */}
           {(startCity || arrivalCity) && (
             <div
               style={{
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: '24px',
-                padding: '12px 24px',
+                padding: '16px 24px',
                 backgroundColor: 'rgba(255, 255, 255, 0.1)',
                 borderRadius: '12px',
                 backdropFilter: 'blur(10px)',
+                gap: '8px',
               }}
             >
-              <span
+              {/* Route */}
+              <div
                 style={{
-                  fontSize: '20px',
+                  fontSize: '24px',
                   color: 'white',
-                  fontWeight: '500',
+                  fontWeight: '600',
                 }}
               >
                 {startCity} → {arrivalCity}
-              </span>
+              </div>
+              
+              {/* Dates */}
+              {(startDate || endDate) && (
+                <div
+                  style={{
+                    fontSize: '18px',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontWeight: '400',
+                  }}
+                >
+                  {startDate && formatDate(startDate)} - {endDate && formatDate(endDate)}
+                </div>
+              )}
             </div>
           )}
 
