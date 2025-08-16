@@ -13,6 +13,7 @@ import {
   Globe,
   MessageSquare
 } from 'lucide-react';
+import { Icon } from 'next/dist/lib/metadata/types/metadata-types';
 
 interface ShareBarProps {
   url: string;
@@ -30,7 +31,7 @@ interface ShareOption {
   id: string;
   label: string;
   description: string;
-  icon: any;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
   url: string;
   color: string;
 }
@@ -65,10 +66,8 @@ export default function ShareBar({
     }
   };
 
-  // Création d'une description enrichie pour le partage
-  const enrichedDescription = startCity && arrivalCity && startDate && endDate && price && currency
-    ? `${title} | Départ: ${startCity} → Arrivée: ${arrivalCity} | ${formatDate(startDate)} - ${formatDate(endDate)} | ${price.toLocaleString()} ${currency}`
-    : description;
+  // Message de partage personnalisable (sans les détails techniques)
+  const shareMessage = `${title} - ${description}`;
 
   // Options de partage pour chaque plateforme
   const getShareOptions = (platform: string): ShareOption[] => {
@@ -100,14 +99,14 @@ export default function ShareBar({
             label: 'Publier un tweet',
             description: 'Partager publiquement sur Twitter',
             icon: Globe,
-            url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(enrichedDescription)}&url=${encodeURIComponent(url)}`,
+                         url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(url)}`,
             color: 'bg-blue-500 hover:bg-blue-600'
           },
           {
             id: 'twitter-dm',
             label: 'Envoyer en message privé',
             description: 'Partager en message direct',
-            url: `https://twitter.com/messages/compose?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
+                         url: `https://twitter.com/messages/compose?text=${encodeURIComponent(`${shareMessage} ${url}`)}`,
             icon: MessageSquare,
             color: 'bg-green-500 hover:bg-green-600'
           }
@@ -127,7 +126,7 @@ export default function ShareBar({
             id: 'linkedin-message',
             label: 'Partager en message',
             description: 'Envoyer en message privé LinkedIn',
-            url: `https://www.linkedin.com/messaging/compose?message=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
+                         url: `https://www.linkedin.com/messaging/compose?message=${encodeURIComponent(`${shareMessage} ${url}`)}`,
             icon: MessageSquare,
             color: 'bg-green-600 hover:bg-green-700'
           }
@@ -140,7 +139,7 @@ export default function ShareBar({
 
   const shareData = {
     whatsapp: {
-      url: `https://wa.me/?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
+             url: `https://wa.me/?text=${encodeURIComponent(`${shareMessage} ${url}`)}`,
       icon: MessageCircle,
       label: 'Partager sur WhatsApp',
       color: 'hover:bg-green-500'
@@ -161,11 +160,11 @@ export default function ShareBar({
   const handleNativeShare = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: title,
-          text: enrichedDescription,
-          url: url,
-        });
+                 await navigator.share({
+           title: title,
+           text: shareMessage,
+           url: url,
+         });
       } catch (err) {
         console.log('Erreur lors du partage natif:', err);
         // Fallback vers la méthode classique
@@ -185,7 +184,7 @@ export default function ShareBar({
   const handlePlatformClick = (platform: string) => {
     if (platform === 'whatsapp') {
       // WhatsApp n'a qu'une option, on partage directement
-      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`;
+             const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareMessage} ${url}`)}`;
       window.open(whatsappUrl, '_blank', 'width=600,height=400');
     } else {
       // Autres plateformes : afficher le modal de sélection
