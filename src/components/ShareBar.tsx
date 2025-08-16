@@ -8,7 +8,10 @@ import {
   MessageCircle, 
   Copy,
   Check,
-  Share2
+  Share2,
+  X,
+  Globe,
+  MessageSquare
 } from 'lucide-react';
 
 interface ShareBarProps {
@@ -23,6 +26,15 @@ interface ShareBarProps {
   currency?: string;
 }
 
+interface ShareOption {
+  id: string;
+  label: string;
+  description: string;
+  icon: any;
+  url: string;
+  color: string;
+}
+
 export default function ShareBar({ 
   url, 
   title, 
@@ -35,6 +47,8 @@ export default function ShareBar({
   currency 
 }: ShareBarProps) {
   const [copied, setCopied] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<string>('');
 
   // Formatage des dates pour l'affichage
   const formatDate = (dateString: string) => {
@@ -56,25 +70,75 @@ export default function ShareBar({
     ? `${title} | Départ: ${startCity} → Arrivée: ${arrivalCity} | ${formatDate(startDate)} - ${formatDate(endDate)} | ${price.toLocaleString()} ${currency}`
     : description;
 
+  // Options de partage pour chaque plateforme
+  const getShareOptions = (platform: string): ShareOption[] => {
+    switch (platform) {
+      case 'facebook':
+        return [
+          {
+            id: 'facebook-post',
+            label: 'Publier sur le mur',
+            description: 'Partager publiquement sur votre profil',
+            icon: Globe,
+            url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+            color: 'bg-blue-600 hover:bg-blue-700'
+          },
+          {
+            id: 'facebook-message',
+            label: 'Partager en message privé',
+            description: 'Envoyer à un ami en privé',
+            url: `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}&app_id=123456789&redirect_uri=${encodeURIComponent(url)}`,
+            icon: MessageSquare,
+            color: 'bg-green-600 hover:bg-green-700'
+          }
+        ];
+      
+      case 'twitter':
+        return [
+          {
+            id: 'twitter-tweet',
+            label: 'Publier un tweet',
+            description: 'Partager publiquement sur Twitter',
+            icon: Globe,
+            url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(enrichedDescription)}&url=${encodeURIComponent(url)}`,
+            color: 'bg-blue-500 hover:bg-blue-600'
+          },
+          {
+            id: 'twitter-dm',
+            label: 'Envoyer en message privé',
+            description: 'Partager en message direct',
+            url: `https://twitter.com/messages/compose?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
+            icon: MessageSquare,
+            color: 'bg-green-500 hover:bg-green-600'
+          }
+        ];
+      
+      case 'linkedin':
+        return [
+          {
+            id: 'linkedin-post',
+            label: 'Publier un post',
+            description: 'Partager publiquement sur LinkedIn',
+            icon: Globe,
+            url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+            color: 'bg-blue-700 hover:bg-blue-800'
+          },
+          {
+            id: 'linkedin-message',
+            label: 'Partager en message',
+            description: 'Envoyer en message privé LinkedIn',
+            url: `https://www.linkedin.com/messaging/compose?message=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
+            icon: MessageSquare,
+            color: 'bg-green-600 hover:bg-green-700'
+          }
+        ];
+      
+      default:
+        return [];
+    }
+  };
+
   const shareData = {
-    twitter: {
-      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(enrichedDescription)}&url=${encodeURIComponent(url)}`,
-      icon: Twitter,
-      label: 'Partager sur Twitter',
-      color: 'hover:bg-blue-500'
-    },
-    facebook: {
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      icon: Facebook,
-      label: 'Partager sur Facebook',
-      color: 'hover:bg-blue-600'
-    },
-    linkedin: {
-      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-      icon: Linkedin,
-      label: 'Partager sur LinkedIn',
-      color: 'hover:bg-blue-700'
-    },
     whatsapp: {
       url: `https://wa.me/?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`,
       icon: MessageCircle,
@@ -118,6 +182,29 @@ export default function ShareBar({
     window.open(data.url, '_blank', 'width=600,height=400');
   };
 
+  const handlePlatformClick = (platform: string) => {
+    if (platform === 'whatsapp') {
+      // WhatsApp n'a qu'une option, on partage directement
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${enrichedDescription} ${url}`)}`;
+      window.open(whatsappUrl, '_blank', 'width=600,height=400');
+    } else {
+      // Autres plateformes : afficher le modal de sélection
+      setSelectedPlatform(platform);
+      setShowShareModal(true);
+    }
+  };
+
+  const handleShareOption = (option: ShareOption) => {
+    window.open(option.url, '_blank', 'width=600,height=400');
+    setShowShareModal(false);
+    setSelectedPlatform('');
+  };
+
+  const closeModal = () => {
+    setShowShareModal(false);
+    setSelectedPlatform('');
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h3 className="text-lg font-semibold text-gray-800 mb-4">
@@ -139,20 +226,45 @@ export default function ShareBar({
       </div>
       
       <div className="flex flex-wrap gap-3">
-        {Object.entries(shareData).map(([platform, data]) => {
-          const Icon = data.icon;
-          return (
-            <button
-              key={platform}
-              onClick={() => handleShare(platform as keyof typeof shareData)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white transition-colors duration-200 ${data.color} bg-gray-600`}
-              title={data.label}
-            >
-              <Icon size={18} />
-              <span className="hidden sm:inline">{data.label}</span>
-            </button>
-          );
-        })}
+        {/* Facebook */}
+        <button
+          onClick={() => handlePlatformClick('facebook')}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-white transition-colors duration-200 hover:bg-blue-600 bg-gray-600"
+          title="Partager sur Facebook"
+        >
+          <Facebook size={18} />
+          <span className="hidden sm:inline">Facebook</span>
+        </button>
+
+        {/* Twitter */}
+        <button
+          onClick={() => handlePlatformClick('twitter')}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-white transition-colors duration-200 hover:bg-blue-500 bg-gray-600"
+          title="Partager sur Twitter"
+        >
+          <Twitter size={18} />
+          <span className="hidden sm:inline">Twitter</span>
+        </button>
+
+        {/* LinkedIn */}
+        <button
+          onClick={() => handlePlatformClick('linkedin')}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-white transition-colors duration-200 hover:bg-blue-700 bg-gray-600"
+          title="Partager sur LinkedIn"
+        >
+          <Linkedin size={18} />
+          <span className="hidden sm:inline">LinkedIn</span>
+        </button>
+
+        {/* WhatsApp */}
+        <button
+          onClick={() => handlePlatformClick('whatsapp')}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-white transition-colors duration-200 hover:bg-green-500 bg-gray-600"
+          title="Partager sur WhatsApp"
+        >
+          <MessageCircle size={18} />
+          <span className="hidden sm:inline">WhatsApp</span>
+        </button>
         
         <button
           onClick={copyToClipboard}
@@ -180,6 +292,53 @@ export default function ShareBar({
           <li><strong>Copier le lien</strong> : Pour partager manuellement ou par message</li>
         </ul>
       </div>
+
+             {/* Modal de sélection du mode de partage */}
+       {showShareModal && selectedPlatform && (
+         <div className="fixed inset-0 bg-gray-300 bg-opacity-20 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Choisir le mode de partage
+              </h3>
+              <button
+                onClick={closeModal}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              {getShareOptions(selectedPlatform).map((option) => {
+                const Icon = option.icon;
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => handleShareOption(option)}
+                    className={`w-full flex items-center gap-3 p-4 rounded-lg text-white transition-colors duration-200 ${option.color}`}
+                  >
+                    <Icon size={20} />
+                    <div className="text-left">
+                      <div className="font-medium">{option.label}</div>
+                      <div className="text-sm opacity-90">{option.description}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <button
+                onClick={closeModal}
+                className="w-full px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-} 
+}
