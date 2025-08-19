@@ -25,6 +25,9 @@ interface ShareBarProps {
   endDate?: string;
   price?: number;
   currency?: string;
+  facebookUsername?: string;
+  facebookAppId?: string;
+  facebookRedirectUri?: string;
 }
 
 interface ShareOption {
@@ -45,7 +48,10 @@ export default function ShareBar({
   startDate, 
   endDate, 
   price, 
-  currency 
+  currency,
+  facebookUsername,
+  facebookAppId,
+  facebookRedirectUri
 }: ShareBarProps) {
   const [copied, setCopied] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -86,7 +92,11 @@ export default function ShareBar({
             id: 'facebook-message',
             label: 'Partager en message privé',
             description: 'Envoyer à un ami en privé',
-            url: `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}&app_id=123456789&redirect_uri=${encodeURIComponent(url)}`,
+            url: facebookAppId && facebookRedirectUri
+              ? `https://www.facebook.com/dialog/send?app_id=${encodeURIComponent(facebookAppId)}&link=${encodeURIComponent(url)}&redirect_uri=${encodeURIComponent(facebookRedirectUri)}&display=popup`
+              : facebookUsername
+                ? `https://m.me/${encodeURIComponent(facebookUsername)}?link=${encodeURIComponent(url)}`
+                : `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
             icon: MessageSquare,
             color: 'bg-green-600 hover:bg-green-700'
           }
@@ -119,7 +129,10 @@ export default function ShareBar({
             label: 'Publier un post',
             description: 'Partager publiquement sur LinkedIn',
             icon: Globe,
-            url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+            url: (() => {
+              const source = typeof window !== 'undefined' ? window.location.hostname : '';
+              return `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(description)}&source=${encodeURIComponent(source)}`;
+            })(),
             color: 'bg-blue-700 hover:bg-blue-800'
           },
           {
@@ -187,7 +200,7 @@ export default function ShareBar({
              const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareMessage} ${url}`)}`;
       window.open(whatsappUrl, '_blank', 'width=600,height=400');
     } else {
-      // Autres plateformes : afficher le modal de sélection
+      // Restaurer le modal pour LinkedIn, Facebook, Twitter
       setSelectedPlatform(platform);
       setShowShareModal(true);
     }
