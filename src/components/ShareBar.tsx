@@ -92,11 +92,9 @@ export default function ShareBar({
             id: 'facebook-message',
             label: 'Partager en message privé',
             description: 'Envoyer à un ami en privé',
-            url: facebookAppId && facebookRedirectUri
-              ? `https://www.facebook.com/dialog/send?app_id=${encodeURIComponent(facebookAppId)}&link=${encodeURIComponent(url)}&redirect_uri=${encodeURIComponent(facebookRedirectUri)}&display=popup`
-              : facebookUsername
-                ? `https://m.me/${encodeURIComponent(facebookUsername)}?link=${encodeURIComponent(url)}`
-                : `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+            url: facebookUsername
+              ? `https://m.me/${encodeURIComponent(facebookUsername)}?link=${encodeURIComponent(url)}`
+              : `https://m.me/?link=${encodeURIComponent(url)}`,
             icon: MessageSquare,
             color: 'bg-green-600 hover:bg-green-700'
           }
@@ -135,11 +133,20 @@ export default function ShareBar({
             })(),
             color: 'bg-blue-700 hover:bg-blue-800'
           },
+          // {
+          //   id: 'linkedin-message',
+          //   label: 'Partager en message',
+          //   description: 'Envoyer en message privé LinkedIn',
+          //                url: `https://www.linkedin.com/messaging/compose?message=${encodeURIComponent(`${shareMessage} ${url}`)}`,
+          //   icon: MessageSquare,
+          //   color: 'bg-green-600 hover:bg-green-700'
+          // }
+
           {
             id: 'linkedin-message',
             label: 'Partager en message',
             description: 'Envoyer en message privé LinkedIn',
-                         url: `https://www.linkedin.com/messaging/compose?message=${encodeURIComponent(`${shareMessage} ${url}`)}`,
+            url: `https://www.linkedin.com/messaging/compose/?text=${encodeURIComponent(`${shareMessage} ${url}`)}`,
             icon: MessageSquare,
             color: 'bg-green-600 hover:bg-green-700'
           }
